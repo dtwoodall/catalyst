@@ -9,7 +9,7 @@ const ACCESS_TOKEN_KEY = 'access_token';
 const CLIENT_ID = config.AUTH0_CLIENT_ID;
 const CLIENT_DOMAIN = config.AUTH0_CLIENT_DOMAIN;
 const REDIRECT = 'http://localhost:3000/';
-const SCOPE = 'all';
+const SCOPE = 'openid profile email all';
 const AUDIENCE = config.AUDIENCE_API_ATTRIBUTE;
 
 var auth = new auth0.WebAuth({
@@ -43,6 +43,8 @@ export function getIdToken() {
 }
 
 export function getAccessToken() {
+  console.log(decode(localStorage.getItem(ACCESS_TOKEN_KEY)));
+  console.log(decode(localStorage.getItem(ID_TOKEN_KEY)));
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
@@ -91,7 +93,7 @@ function getTokenExpirationDate(encodedToken) {
   return date;
 }
 
-function isTokenExpired(token) {
+export function isTokenExpired(token) {
   const expirationDate = getTokenExpirationDate(token);
   return expirationDate < new Date();
 }

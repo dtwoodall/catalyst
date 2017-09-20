@@ -2,16 +2,20 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import {taskSchema} from '../modules/tasks';
 import {categorySchema} from '../modules/categories';
-import {getAccessToken} from './authentication';
+import {getAccessToken, isTokenExpired, logout} from './authentication';
+import store from '../store';
 
 const schedulerAPI = axios.create({baseURL: 'http://localhost:5000/'});
 
 const simpleAPICall = (method, url, schema, data) => {
 
   const accessToken = getAccessToken();
+
   let options = {};
-  
   if (accessToken) {
+    if (isTokenExpired(accessToken)) {
+      return Promise.resolve(store.dispatch(logout()));
+    }
     options = {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`
