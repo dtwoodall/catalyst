@@ -2,12 +2,26 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import {taskSchema} from '../modules/tasks';
 import {categorySchema} from '../modules/categories';
+import {getAccessToken} from './authentication';
 
 const schedulerAPI = axios.create({baseURL: 'http://localhost:5000/'});
 
-const simpleAPICall = (method, url, schema, data) => (
-  schedulerAPI[method](url, data).then(response => normalize(response.data, schema))
-);
+const simpleAPICall = (method, url, schema, data) => {
+
+  const accessToken = getAccessToken();
+  let options = {};
+  
+  if (accessToken) {
+    options = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`
+      }
+    };
+  }
+
+  return schedulerAPI[method](url, data ? data : options, options).then(response => normalize(response.data, schema));
+
+};
 
 export const getTasks = () => simpleAPICall('get', 'tasks', [taskSchema]);
 export const getTaskById = taskId => simpleAPICall('get', `tasks/${taskId}`, taskSchema);

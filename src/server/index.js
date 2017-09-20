@@ -3,7 +3,24 @@ const cors = require('cors');
 const Sequelize = require('sequelize');
 const path = require('path');
 const bodyParser = require('body-parser');
+const jwt = require('express-jwt');
+const jwks = require('jwks-rsa');
+const config = require('./config/config');
 
+// Auth0 Authentication middleware
+const authCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `https://${config.AUTH0_DOMAIN}/.well-known/jwks.json`
+  }),
+  audience: `${config.API_AUDIENCE_ATTRIBUTE}`,
+  issuer: `https://${config.AUTH0_DOMAIN}/`,
+  algorithms: ['RS256']
+});
+
+// Database setup
 const sequelize = new Sequelize('postgres://postgres:Pg11235!@localhost:5432/scheduler');
 
 const formats = {
@@ -50,7 +67,7 @@ app.use(cors({
 
 app.options('*', cors());
 
-app.get('/tasks', (req, res) => {
+app.get('/tasks', authCheck, (req, res) => {
 
   Task.findAll({
     attributes: ['id', 'summary', 'description', 'parentId'],
@@ -128,7 +145,7 @@ app.get('/categories', (req, res) => {
 
 });
 
-app.get('/categories/:categoryId', (req, res) => {
+app.get('/categories/:categoryId', authCheck, (req, res) => {
 
   Category.findOne({
     attributes: ['id', 'name', 'color'],

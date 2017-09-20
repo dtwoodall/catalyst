@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {withStyles, createStyleSheet} from 'material-ui/styles';
+import {setIdToken, setAccessToken} from '../utilities/authentication';
 
 // Component imports
 import AppHeader from './AppHeader';
@@ -34,6 +35,8 @@ const styleSheet = createStyleSheet(theme => ({
 class TaskList extends Component {
 
   componentDidMount() {
+    setIdToken();
+    setAccessToken();
     this.props.fetchTasks();
   }
   

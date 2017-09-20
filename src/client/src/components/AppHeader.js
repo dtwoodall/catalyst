@@ -1,7 +1,9 @@
 // Base imports
 import React, {Component} from 'react';
+import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {withStyles, createStyleSheet} from 'material-ui/styles';
+import {login, logout, isLoggedIn} from '../utilities/authentication';
 
 // Component imports
 import AppBar from 'material-ui/AppBar';
@@ -22,22 +24,27 @@ import FlexItem from './FlexItem';
 import {getIsMenuOpen} from '../modules';
 
 // Action imports
-import { openMenu, closeMenu } from '../modules/menu';
+import {openMenu, closeMenu} from '../modules/menu';
 
+const stylesheet = createStyleSheet({
+  toolbar: {
+    width: '100%'
+  }
+});
 
 class AppHeader extends Component {
 
   render() {
 
     // Destructuring of props
-    const {openMenu, title} = this.props;
+    const {title, openMenu, logout, classes} = this.props;
 
     return (
 
       <AppBar position="static">
         <Toolbar>
 
-          <FlexBox align="center">
+          <FlexBox align="center" className={classes.toolbar}>
 
             <IconButton color="contrast" aria-label="Menu" onClick={openMenu} style={{marginRight: '16px'}}>
               <MenuIcon />
@@ -47,12 +54,21 @@ class AppHeader extends Component {
               {title}
             </Typography>
 
-            <FlexItem />
+            <FlexItem flex="1" />
 
-            {/*
-              <!Button color="contrast">LOG IN</Button>
-              <Button color="contrast">SIGN UP</Button>
-            */}
+            {(isLoggedIn()) ?
+              (
+                <div>
+                  <Button color="contrast" onClick={() => logout()}>LOG OUT</Button>
+                </div>
+              ) : (
+                <div>
+                  <Button color="contrast" onClick={() => login()}>LOG IN</Button>
+                  <Button color="contrast">SIGN UP</Button>
+                </div>
+              )
+            }
+
 
           </FlexBox>
 
@@ -66,10 +82,14 @@ class AppHeader extends Component {
 }
 
 const mapDispatchToProps = {
-  openMenu
+  openMenu,
+  logout
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
+export default compose(
+  withStyles(stylesheet),
+  connect(
+    null,
+    mapDispatchToProps
+  )
 )(AppHeader);
