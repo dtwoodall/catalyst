@@ -83,11 +83,11 @@ export const fetchTaskById = taskId => dispatch => {
 
 }
 
-export const fetchTaskByCategoryId = categoryId => dispatch => {
+export const fetchTasksByCategoryId = categoryId => dispatch => {
 
   dispatch({type: 'FETCH_TASKS'});
 
-  schedulerAPI.getTaskByCategoryId(categoryId).then(payload => {
+  schedulerAPI.getTasksByCategoryId(categoryId).then(payload => {
     dispatch({
       type: 'RECEIVE_TASKS',
       tasks: payload.entities.tasks

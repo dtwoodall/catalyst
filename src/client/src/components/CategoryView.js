@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import queryString from 'query-string';
 import {getCategoryById, getRootTasksByCategoryId} from '../modules';
+import {fetchTasksByCategoryId} from '../modules/tasks';
 import {fetchCategoryById} from '../modules/categories';
 //import {getRootTasks, getTaskById, getNewTask, getChildTasksByParentId, getCategoryById} from '../modules';
 //import {fetchTaskById, updateTask as updateExistingTask, sendTask, createTask} from '../modules/tasks';
@@ -62,12 +63,14 @@ class CategoryView extends Component {
   componentDidMount() {
     if (this.props.match.params.categoryId !== 'new') {
       this.props.fetchCategoryById(this.props.match.params.categoryId);
+      this.props.fetchTasksByCategoryId(this.props.match.params.categoryId);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.match.params.categoryId !== 'new' && this.props.match !== nextProps.match) {
       this.props.fetchCategoryById(nextProps.match.params.categoryId);
+      this.props.fetchTasksByCategoryId(this.props.match.params.categoryId);
     }
   }
 
@@ -159,6 +162,7 @@ const mapStateToProps = (state, { match, location }) => {
 const mapDispatchToProps = dispatch => bindActionCreators({
   viewTask: (taskId) => push(`/tasks/${taskId}`),
   fetchCategoryById,
+  fetchTasksByCategoryId,
   //sendTask,
   //updateNewTask,
   //updateExistingTask,

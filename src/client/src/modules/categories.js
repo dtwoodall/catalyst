@@ -17,9 +17,7 @@ export default (state = {}, action) => {
 
 
 // Category schema
-export const categorySchema = new schema.Entity('categories', {
-  tasks: [taskSchema]
-});
+export const categorySchema = new schema.Entity('categories');
 
 
 // Category selectors

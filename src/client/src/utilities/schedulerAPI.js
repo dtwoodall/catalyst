@@ -29,7 +29,7 @@ const simpleAPICall = (method, url, schema, data) => {
 
 export const getTasks = () => simpleAPICall('get', 'tasks', [taskSchema]);
 export const getTaskById = taskId => simpleAPICall('get', `tasks/${taskId}`, taskSchema);
-export const getTasksByCategory = categoryId => simpleAPICall('get', `categories/${categoryId}/tasks`, [taskSchema]);
+export const getTasksByCategoryId = categoryId => simpleAPICall('get', `categories/${categoryId}/tasks`, [taskSchema]);
 export const updateTask = task => simpleAPICall('post', `tasks/${task.id}`, taskSchema, task);
 export const createTask = task => simpleAPICall('post', 'tasks', taskSchema, task);
 

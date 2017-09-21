@@ -19,7 +19,7 @@ export const getIsMenuOpen = state => fromMenu.getIsMenuOpen(state.menu);
 
 export const getRootTasks = state => fromTasks.getRootTasks(state.tasks);
 
-export const getRootTasksByCategoryId = state => fromTasks.getRootTasksByCategoryId(state.tasks);
+export const getRootTasksByCategoryId = (state, categoryId) => fromTasks.getRootTasksByCategoryId(state.tasks, categoryId);
 
 export const getTaskById = (state, id) => fromTasks.getTaskById(state.tasks, id);
 

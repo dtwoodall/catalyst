@@ -137,7 +137,7 @@ app.post('/tasks/:taskId', (req, res) => {
 
 });
 
-app.get('/categories', (req, res) => {
+app.get('/categories', authCheck, (req, res) => {
 
   Category.findAll({
     attributes: ['id', 'name', 'color']
@@ -151,17 +151,20 @@ app.get('/categories/:categoryId', authCheck, (req, res) => {
     attributes: ['id', 'name', 'color'],
     where: {
       id: req.params.categoryId
-    },
-    include: [
-      {
-        model: Task,
-        attributes: ['id', 'summary', 'description'],
-        where: {
-          parentId: null
-        }
-      }
-    ]
-  }).then(task => res.json(task));
+    }
+  }).then(category => res.json(category));
+
+});
+
+app.get('/categories/:categoryId/tasks', authCheck, (req, res) => {
+
+  Task.findAll({
+    attributes: ['id', 'summary', 'description', 'parentId', 'categoryId'],
+    where: {
+      parentId: null,
+      categoryId: req.params.categoryId
+    }
+  }).then(tasks => res.json(tasks));
 
 });
 
