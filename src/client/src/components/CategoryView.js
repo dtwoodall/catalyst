@@ -4,12 +4,12 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import queryString from 'query-string';
-import {getCategoryById, getRootTasksByCategoryId} from '../modules';
+import {getCategoryById, getRootTasksByCategoryId, getNewCategory} from '../modules';
 import {fetchTasksByCategoryId} from '../modules/tasks';
-import {fetchCategoryById} from '../modules/categories';
+import {fetchCategoryById, updateCategory as updateExistingCategory, sendCategory, createCategory} from '../modules/categories';
 //import {getRootTasks, getTaskById, getNewTask, getChildTasksByParentId, getCategoryById} from '../modules';
 //import {fetchTaskById, updateTask as updateExistingTask, sendTask, createTask} from '../modules/tasks';
-import {updateNewTask} from '../modules/newTask';
+import {updateNewCategory} from '../modules/newCategory';
 import AppHeader from './AppHeader';
 import FlexBox from './FlexBox';
 import InlineEdit from './InlineEdit';
@@ -74,9 +74,9 @@ class CategoryView extends Component {
     }
   }
 
-  /*updateTask(task) {
-    task.id ? this.props.updateExistingTask(task) : this.props.updateNewTask(task);
-  }*/
+  updateCategory(category) {
+    category.id ? this.props.updateExistingCategory(category) : this.props.updateNewCategory(category);
+  }
 
   render() {
 
@@ -85,6 +85,9 @@ class CategoryView extends Component {
       tasks,
       classes,
       viewTask,
+      addTask,
+      sendCategory,
+      createCategory,
       history
     } = this.props;
 
@@ -103,6 +106,11 @@ class CategoryView extends Component {
               inputProps={{
                 'aria-label': 'Name',
               }}
+              onChange={(event) => this.updateCategory({
+                ...category,
+                name: event.target.value
+              })}
+              onSubmit={category.id ? () => sendCategory(category) : null}
             />
           </FlexBox>
         </AppBar>
@@ -118,6 +126,11 @@ class CategoryView extends Component {
               inputProps={{
                 'aria-label': 'Color',
               }}
+              onChange={(event) => this.updateCategory({
+                ...category,
+                color: event.target.value
+              })}
+              onSubmit={category.id ? () => sendCategory(category) : null}
             />
           </ListItem>
           <Divider />
@@ -129,6 +142,17 @@ class CategoryView extends Component {
             </ListItem>
           )) : null}
         </List>
+        {category.id ? (
+          <Button fab color="primary" aria-label="add" className={classes.addButton} onClick={() => addTask(category.id)}>
+            <Icon>add</Icon>
+          </Button>
+        ) : (
+          <FlexBox justify="flex-end">
+            <Button raised color="primary" aria-label="save" className={classes.button} onClick={() => createCategory(category)}>
+              Save
+            </Button>
+          </FlexBox>
+        )}
       </div>
     );
 
@@ -147,9 +171,7 @@ const mapStateToProps = (state, { match, location }) => {
     category = getCategoryById(state, categoryId) || {};
     tasks = getRootTasksByCategoryId(state, categoryId);
   } else {
-    //task = getNewTask(state);
-    //const query = queryString.parse(location.search);
-    //task.parentId = parseInt(query.parent);
+    category = getNewCategory(state);
   }
 
   return {
@@ -161,12 +183,13 @@ const mapStateToProps = (state, { match, location }) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   viewTask: (taskId) => push(`/tasks/${taskId}`),
+  addTask: (categoryId) => push(`/tasks/new?category=${categoryId}`),
   fetchCategoryById,
   fetchTasksByCategoryId,
-  //sendTask,
-  //updateNewTask,
-  //updateExistingTask,
-  //createTask
+  sendCategory,
+  updateNewCategory,
+  updateExistingCategory,
+  createCategory
 }, dispatch);
 
 export default withRouter(withStyles(styleSheet)(

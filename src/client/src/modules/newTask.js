@@ -4,7 +4,7 @@ import * as schedulerAPI from '../utilities/schedulerAPI';
 export default (state = {}, action) => {
   switch (action.type) {
     case 'UPDATE_NEW_TASK':
-      return action.task;
+      return {...action.task};
     case 'ADD_TASK':
       return {};
     default:
@@ -17,7 +17,7 @@ export default (state = {}, action) => {
 export const getNewTask = state => state;
 
 
-// Tasks action creators
+// New Task action creators
 export const updateNewTask = task => ({
   type: 'UPDATE_NEW_TASK',
   task

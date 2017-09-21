@@ -4,6 +4,7 @@ import menu, * as fromMenu from './menu';
 import tasks, * as fromTasks from './tasks';
 import newTask, * as fromNewTask from './newTask';
 import categories, * as fromCategories from './categories';
+import newCategory, * as fromNewCategory from './newCategory';
 
 // Root reducer
 export default combineReducers({
@@ -11,7 +12,8 @@ export default combineReducers({
   menu,
   tasks,
   newTask,
-  categories
+  categories,
+  newCategory
 });
 
 // Root selectors
@@ -30,3 +32,5 @@ export const getChildTasksByParentId = (state, id) => fromTasks.getChildTasksByP
 export const getCategories = state => fromCategories.getCategories(state.categories);
 
 export const getCategoryById = (state, id) => fromCategories.getCategoryById(state.categories, id);
+
+export const getNewCategory = state => fromNewCategory.getNewCategory(state.newCategory);

@@ -41,7 +41,7 @@ class CategoryList extends Component {
   render() {
 
     // Destructuring of props
-    const {classes, categories} = this.props;
+    const {classes, categories, createCategory} = this.props;
 
     return (
       <div>
@@ -52,7 +52,7 @@ class CategoryList extends Component {
               <CategoryPreview key={category.id} category={category} />
             ))}
           </List>
-          <Button fab color="primary" aria-label="add" className={classes.addButton}>
+          <Button fab color="primary" aria-label="add" className={classes.addButton} onClick={() => createCategory()}>
             <Icon>add</Icon>
           </Button>
         </div>
@@ -68,6 +68,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+  createCategory: () => push('/categories/new'),
   fetchCategories
 }, dispatch);
 

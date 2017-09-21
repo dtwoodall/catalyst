@@ -79,7 +79,7 @@ app.get('/tasks', authCheck, (req, res) => {
 
 });
 
-app.get('/tasks/:taskId', (req, res) => {
+app.get('/tasks/:taskId', authCheck, (req, res) => {
 
   Task.findOne({
     attributes: ['id', 'summary', 'description', 'parentId'],
@@ -100,7 +100,7 @@ app.get('/tasks/:taskId', (req, res) => {
 
 });
 
-app.post('/tasks', (req, res) => {
+app.post('/tasks', authCheck, (req, res) => {
 
   const {summary, description, parentId} = req.body;
 
@@ -110,7 +110,7 @@ app.post('/tasks', (req, res) => {
 
 });
 
-app.post('/tasks/:taskId', (req, res) => {
+app.post('/tasks/:taskId', authCheck, (req, res) => {
 
   const {summary, description} = req.body;
 
@@ -168,7 +168,7 @@ app.get('/categories/:categoryId/tasks', authCheck, (req, res) => {
 
 });
 
-app.post('/categories', (req, res) => {
+app.post('/categories', authCheck, (req, res) => {
 
   const {name, color} = req.body;
 
@@ -177,6 +177,25 @@ app.post('/categories', (req, res) => {
   }).catch(err => console.log(err));
 
 });
+
+app.post('/categories/:categoryId', authCheck, (req, res) => {
+
+  const {name, color} = req.body;
+
+  return Category.findOne({
+    attributes: ['id', 'name', 'color'],
+    where: {
+      id: req.params.categoryId
+    }
+  }).then(category => {
+    return category.update({name, color}).then(updatedCategory => {
+      return res.json(updatedCategory);
+    }).catch(err => console.log(err));
+  }).catch(err => console.log(err));
+
+});
+
+
 
 app.get('/*', (req, res) => {
   return res.send('Content not found! Check your url.');

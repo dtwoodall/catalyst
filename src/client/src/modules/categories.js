@@ -1,11 +1,13 @@
 import * as schedulerAPI from '../utilities/schedulerAPI';
-import { schema } from 'normalizr';
-import taskSchema from './tasks';
+import {push} from 'react-router-redux';
+import {schema} from 'normalizr';
 
 // Categories reducer
 export default (state = {}, action) => {
   switch (action.type) {
     case 'RECEIVE_CATEGORIES':
+    case 'UPDATE_CATEGORY':
+    case 'ADD_CATEGORY':
       return {
         ...state,
         ...action.categories
@@ -27,6 +29,11 @@ export const getCategoryById = (state, id) => state[id];
 
 
 // Category action creators
+export const updateCategory = (category) => ({
+  type: 'UPDATE_CATEGORY',
+  categories: {[category.id]: category}
+});
+
 export const fetchCategories = () => dispatch => {
 
   dispatch({type: 'FETCH_CATEGORIES'});
@@ -49,6 +56,29 @@ export const fetchCategoryById = categoryId => dispatch => {
       type: 'RECEIVE_CATEGORIES',
       categories: payload.entities.categories
     });
+  }).catch((err) => console.log(err));
+
+}
+
+export const sendCategory = category => dispatch => {
+
+  schedulerAPI.updateCategory(category).then(payload => {
+    dispatch({
+      type: 'UPDATE_CATEGORY',
+      categories: payload.entities.categories
+    })
+  }).catch((err) => console.log(err));
+
+}
+
+export const createCategory = category => dispatch => {
+
+  schedulerAPI.createCategory(category).then(payload => {
+    dispatch({
+      type: 'ADD_CATEGORY',
+      categories: payload.entities.categories
+    })
+    dispatch(push(`/categories/${payload.result}`));
   }).catch((err) => console.log(err));
 
 }
