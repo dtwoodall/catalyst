@@ -2,11 +2,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
+import {login, logout, isLoggedIn} from '../utilities/authentication';
 
 // Component imports
 import {Route, withRouter} from 'react-router-dom';
 import Drawer from 'material-ui/Drawer';
 import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
+import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import TaskList from './TaskList';
 import TaskView from './TaskView';
@@ -25,7 +27,7 @@ class App extends Component {
   render() {
 
     // Destructuring of props
-    const {menuIsOpen, closeMenu, viewTasks, viewCategories} = this.props;
+    const {menuIsOpen, closeMenu, viewTasks, viewCategories, logout} = this.props;
 
     return (
 
@@ -56,6 +58,21 @@ class App extends Component {
               </ListItemIcon>
               <ListItemText primary="Categories" />
             </ListItem>
+            {(isLoggedIn()) ? (
+              <ListItem button onClick={() => logout()}>
+                <ListItemIcon>
+                  <Icon>exit_to_app</Icon>
+                </ListItemIcon>
+                <ListItemText primary="Logout" />
+              </ListItem>
+            ) : (
+              <ListItem button onClick={() => login()}>
+                <ListItemIcon>
+                  <Icon>person</Icon>
+                </ListItemIcon>
+                <ListItemText primary="Log In" />
+              </ListItem>
+            )}
           </List>
         </Drawer>
 
@@ -74,7 +91,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   viewTasks: () => push('/tasks'),
   viewCategories: () => push('/categories'),
-  closeMenu
+  closeMenu,
+  logout
 };
 
 export default withRouter(connect(

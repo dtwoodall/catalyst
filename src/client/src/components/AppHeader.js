@@ -3,14 +3,11 @@ import React, {Component} from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {withStyles, createStyleSheet} from 'material-ui/styles';
-import {login, logout, isLoggedIn} from '../utilities/authentication';
 
 // Component imports
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import Drawer from 'material-ui/Drawer';
 import List, {ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
@@ -37,7 +34,7 @@ class AppHeader extends Component {
   render() {
 
     // Destructuring of props
-    const {title, openMenu, logout, classes} = this.props;
+    const {title, openMenu, classes} = this.props;
 
     return (
 
@@ -54,22 +51,6 @@ class AppHeader extends Component {
               {title}
             </Typography>
 
-            <FlexItem flex="1" />
-
-            {(isLoggedIn()) ?
-              (
-                <div>
-                  <Button color="contrast" onClick={() => logout()}>LOG OUT</Button>
-                </div>
-              ) : (
-                <div>
-                  <Button color="contrast" onClick={() => login()}>LOG IN</Button>
-                  <Button color="contrast">SIGN UP</Button>
-                </div>
-              )
-            }
-
-
           </FlexBox>
 
         </Toolbar>
@@ -82,8 +63,7 @@ class AppHeader extends Component {
 }
 
 const mapDispatchToProps = {
-  openMenu,
-  logout
+  openMenu
 };
 
 export default compose(
