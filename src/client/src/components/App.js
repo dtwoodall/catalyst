@@ -63,7 +63,7 @@ class App extends Component {
                 <ListItemIcon>
                   <Icon>exit_to_app</Icon>
                 </ListItemIcon>
-                <ListItemText primary="Logout" />
+                <ListItemText primary="Log out" />
               </ListItem>
             ) : (
               <ListItem button onClick={() => login()}>

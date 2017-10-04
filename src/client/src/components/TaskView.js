@@ -167,7 +167,7 @@ const mapStateToProps = (state, { match, location }) => {
   let taskId = match.params.taskId;
   let task = {};
   let childTasks = [];
-  let category = {};
+  let category = null;
 
   if (taskId !== 'new') {
     taskId = parseInt(taskId);

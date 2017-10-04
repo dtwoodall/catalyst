@@ -9,9 +9,11 @@ import {setIdToken, setAccessToken} from '../utilities/authentication';
 // Component imports
 import AppHeader from './AppHeader';
 import TaskPreview from './TaskPreview';
+import FlexBox from './FlexBox';
 import List from 'material-ui/List';
 import Icon from 'material-ui/Icon';
 import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
 
 // Selector imports
 import {getRootTasks, getCategories} from '../modules';
@@ -28,6 +30,17 @@ const styleSheet = createStyleSheet(theme => ({
     position: 'fixed',
     bottom: `${theme.spacing.unit * 4}px`,
     right: `${theme.spacing.unit * 4}px`
+  },
+  link: {
+    color: '#0CF',
+    '&:hover, &:active': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+      color: '#00BBE8'
+    }
+  },
+  noTasks: {
+    marginTop: `${theme.spacing.unit*8}px`
   }
 }));
 
@@ -49,16 +62,22 @@ class TaskList extends Component {
     return (
       <div>
         <AppHeader title="Task List" />
-        <div>
+        {(rootTasks && rootTasks.length > 0) ?
           <List>
             {rootTasks.map(task => (
               <TaskPreview key={task.id} task={task} category={categories[task.category]} />
             ))}
           </List>
-          <Button fab color="primary" aria-label="add" className={classes.addButton} onClick={() => createTask()}>
-            <Icon>add</Icon>
-          </Button>
-        </div>
+        :
+          <FlexBox className={classes.noTasks} align="center" justify="center">
+            <Typography type="subheading" color="secondary">
+              Nothing to do? <span className={classes.link} onClick={() => createTask()}>Create a task...</span>
+            </Typography>
+          </FlexBox>
+        }
+        <Button fab color="primary" aria-label="add" className={classes.addButton} onClick={() => createTask()}>
+          <Icon>add</Icon>
+        </Button>
       </div>
     );
 
