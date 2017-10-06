@@ -27,7 +27,7 @@ class App extends Component {
   render() {
 
     // Destructuring of props
-    const {menuIsOpen, closeMenu, viewTasks, viewCategories, logout} = this.props;
+    const {isMenuOpen, closeMenu, viewTasks, viewCategories, logout} = this.props;
 
     return (
 
@@ -42,7 +42,7 @@ class App extends Component {
         <Route exact path="/categories/:categoryId" component={CategoryView} />
 
         <Drawer
-          open={menuIsOpen}
+          open={isMenuOpen}
           onRequestClose={closeMenu}
         >
           <List>
@@ -85,7 +85,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  menuIsOpen: getIsMenuOpen(state)
+  isMenuOpen: getIsMenuOpen(state)
 });
 
 const mapDispatchToProps = {

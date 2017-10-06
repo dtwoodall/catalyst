@@ -9,9 +9,6 @@ import {withStyles, createStyleSheet} from 'material-ui/styles';
 import CategoryLabel from './CategoryLabel';
 import {ListItem, ListItemText, ListItemIcon} from 'material-ui/List';
 
-// Action imports
-import {push} from 'react-router-redux';
-
 // Stylesheet generation
 const styleSheet = createStyleSheet(theme => ({
   root: {
@@ -27,10 +24,10 @@ class CategoryPreview extends Component {
   render() {
 
     // Destructuring of props
-    const {category, viewCategory, classes} = this.props;
+    const {category, onClick, classes} = this.props;
 
     return (
-      <ListItem className={classes.root} button onClick={() => viewCategory(category.id)}>
+      <ListItem className={classes.root} button onClick={() => onClick()}>
         <ListItemIcon>
           <CategoryLabel category={category} />
         </ListItemIcon>
@@ -51,16 +48,5 @@ CategoryPreview.propTypes = {
   }).isRequired
 };
 
-// Selector Injection
-
-
-// Action Injection
-const mapDispatchToProps = dispatch => bindActionCreators({
-  viewCategory: (categoryId) => push('/categories/' + categoryId)
-}, dispatch);
-
 // Connect to data
-export default compose(
-  withStyles(styleSheet),
-  connect(null, mapDispatchToProps)
-)(CategoryPreview);
+export default withStyles(styleSheet)(CategoryPreview);

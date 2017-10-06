@@ -41,7 +41,7 @@ class CategoryList extends Component {
   render() {
 
     // Destructuring of props
-    const {classes, categories, createCategory} = this.props;
+    const {classes, categories, viewCategory, createCategory} = this.props;
 
     return (
       <div>
@@ -49,7 +49,7 @@ class CategoryList extends Component {
         <div>
           <List>
             {Object.values(categories).map(category => (
-              <CategoryPreview key={category.id} category={category} />
+              <CategoryPreview key={category.id} category={category} onClick={() => viewCategory(category.id)} />
             ))}
           </List>
           <Button fab color="primary" aria-label="add" className={classes.addButton} onClick={() => createCategory()}>
@@ -68,6 +68,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+  viewCategory: (categoryId) => push('/categories/' + categoryId),
   createCategory: () => push('/categories/new'),
   fetchCategories
 }, dispatch);

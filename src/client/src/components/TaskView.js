@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, compose} from 'redux';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import queryString from 'query-string';
-import {getRootTasks, getTaskById, getNewTask, getChildTasksByParentId, getCategoryById} from '../modules';
+import {getRootTasks, getTaskById, getNewTask, getChildTasksByParentId, getCategoryById, getIsCategorySelectDialogOpen} from '../modules';
 import {fetchTaskById, updateTask as updateExistingTask, sendTask, createTask} from '../modules/tasks';
 import {updateNewTask} from '../modules/newTask';
+import {openCategorySelectDialog, closeCategorySelectDialog} from '../modules/categorySelectDialog';
 import AppHeader from './AppHeader';
+import CategorySelectDialog from './CategorySelectDialog';
 import FlexBox from './FlexBox';
 import InlineEdit from './InlineEdit';
 import {withStyles, createStyleSheet} from 'material-ui/styles';
@@ -18,6 +20,8 @@ import IconButton from 'material-ui/IconButton';
 import Button from 'material-ui/Button';
 import Icon from 'material-ui/Icon';
 import Divider from 'material-ui/Divider';
+import Dialog from 'material-ui/Dialog';
+import Slide from 'material-ui/transitions/Slide';
 
 const styleSheet = createStyleSheet(theme => ({
   header: {
@@ -52,6 +56,9 @@ const styleSheet = createStyleSheet(theme => ({
   },
   multiline: {
     alignItems: 'start'
+  },
+  fieldList: {
+    paddingTop: '0'
   }
 }));
 
@@ -84,12 +91,15 @@ class TaskView extends Component {
       addTask,
       sendTask,
       createTask,
+      isCategorySelectDialogOpen,
+      openCategorySelectDialog,
+      closeCategorySelectDialog,
       history
     } = this.props;
 
     return (
       <div>
-        <AppBar position="static" className={classes.header}>
+        <AppBar position="static" className={classes.header} style={{backgroundColor: category ? category.color : '#000'}}>
           <FlexBox align="flex-end">
             <IconButton color="contrast" className={classes.headerButton} onClick={() => history.goBack()}>
               <Icon>keyboard_arrow_left</Icon>
@@ -110,8 +120,8 @@ class TaskView extends Component {
             />
           </FlexBox>
         </AppBar>
-        <List>
-          <ListItem>
+        <List className={classes.fieldList}>
+          <ListItem button onClick={() => openCategorySelectDialog()}>
             <ListItemIcon>
               <Icon>folder</Icon>
             </ListItemIcon>
@@ -155,6 +165,30 @@ class TaskView extends Component {
             </Button>
           </FlexBox>
         )}
+        <Dialog
+          fullScreen
+          open={isCategorySelectDialogOpen}
+          onRequestClose={closeCategorySelectDialog}
+          transition={<Slide direction="up" />}
+        >
+          <CategorySelectDialog
+            selectCategory={(categoryId) => {
+              if (task.id) {
+                sendTask({
+                  ...task,
+                  categoryId
+                });
+              } else {
+                this.updateTask({
+                  ...task,
+                  categoryId
+                });
+              }
+              closeCategorySelectDialog();
+            }}
+            closeDialog={() => closeCategorySelectDialog()}
+          />
+        </Dialog>
       </div>
     );
 
@@ -173,9 +207,10 @@ const mapStateToProps = (state, { match, location }) => {
     taskId = parseInt(taskId);
     task = getTaskById(state, taskId) || {};
     childTasks = getChildTasksByParentId(state, taskId);
-    category = getCategoryById(state, task.category);
+    category = getCategoryById(state, task.categoryId);
   } else {
     task = getNewTask(state);
+    category = getCategoryById(state, task.categoryId);
     const query = queryString.parse(location.search);
     task.parentId = parseInt(query.parent);
   }
@@ -183,7 +218,8 @@ const mapStateToProps = (state, { match, location }) => {
   return {
     task,
     childTasks,
-    category
+    category,
+    isCategorySelectDialogOpen: getIsCategorySelectDialogOpen(state)
   };
 
 };
@@ -191,6 +227,8 @@ const mapStateToProps = (state, { match, location }) => {
 const mapDispatchToProps = dispatch => bindActionCreators({
   viewTask: (taskId) => push(`/tasks/${taskId}`),
   addTask: (taskId) => push(`/tasks/new?parent=${taskId}`),
+  openCategorySelectDialog,
+  closeCategorySelectDialog,
   fetchTaskById,
   sendTask,
   updateNewTask,
@@ -198,6 +236,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   createTask
 }, dispatch);
 
-export default withRouter(withStyles(styleSheet)(
-  connect(mapStateToProps, mapDispatchToProps)(TaskView)
-));
+export default compose(
+  withRouter,
+  withStyles(styleSheet),
+  connect(mapStateToProps, mapDispatchToProps)
+)(TaskView);

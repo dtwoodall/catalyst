@@ -70,7 +70,7 @@ app.options('*', cors());
 app.get('/tasks', authCheck, (req, res) => {
 
   Task.findAll({
-    attributes: ['id', 'summary', 'description', 'parentId'],
+    attributes: ['id', 'summary', 'description', 'categoryId', 'parentId'],
     include: [{
       model: Category,
       attributes: ['id', 'name', 'color']
@@ -82,7 +82,7 @@ app.get('/tasks', authCheck, (req, res) => {
 app.get('/tasks/:taskId', authCheck, (req, res) => {
 
   Task.findOne({
-    attributes: ['id', 'summary', 'description', 'parentId'],
+    attributes: ['id', 'summary', 'description', 'categoryId', 'parentId'],
     where: {
       id: req.params.taskId
     },
@@ -102,7 +102,7 @@ app.get('/tasks/:taskId', authCheck, (req, res) => {
 
 app.post('/tasks', authCheck, (req, res) => {
 
-  const {summary, description, parentId} = req.body;
+  const {summary, description, categoryId, parentId} = req.body;
 
   Task.create({summary, description, parentId}).then(newTask => {
     return res.json(newTask);
@@ -112,10 +112,10 @@ app.post('/tasks', authCheck, (req, res) => {
 
 app.post('/tasks/:taskId', authCheck, (req, res) => {
 
-  const {summary, description} = req.body;
+  const {summary, description, categoryId} = req.body;
 
   return Task.findOne({
-    attributes: ['id', 'summary', 'description', 'parentId'],
+    attributes: ['id', 'summary', 'description', 'categoryId', 'parentId'],
     where: {
       id: req.params.taskId
     },
@@ -130,7 +130,7 @@ app.post('/tasks/:taskId', authCheck, (req, res) => {
       }
     ]
   }).then(task => {
-    return task.update({summary, description}).then(updatedTask => {
+    return task.update({summary, description, categoryId}).then(updatedTask => {
       return res.json(updatedTask);
     }).catch(err => console.log(err));
   }).catch(err => console.log(err));
