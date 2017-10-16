@@ -33,7 +33,7 @@ class App extends Component {
 
       <div>
 
-        <Route component={TaskList} />
+        <Route exact path="/" component={TaskList} />
 
         <Route exact path="/tasks" component={TaskList} />
         <Route exact path="/tasks/:taskId" component={TaskView} />
