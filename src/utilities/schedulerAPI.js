@@ -5,7 +5,9 @@ import {categorySchema} from '../modules/categories';
 import {getAccessToken, isTokenExpired, logout} from './authentication';
 import store from '../store';
 
-const schedulerAPI = axios.create({baseURL: 'http://localhost:5000/'});
+const schedulerAPI = axios.create({baseURL: (
+  process.env.NODE_ENV === 'production' ? 'https://dt-catalyst-api.herokuapp.com/' : 'http://localhost:5000/'
+)});
 
 const simpleAPICall = (method, url, schema, data) => {
 
