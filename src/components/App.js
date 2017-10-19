@@ -41,6 +41,8 @@ class App extends Component {
         <Route exact path="/categories" component={CategoryList} />
         <Route exact path="/categories/:categoryId" component={CategoryView} />
 
+        { process.env.NODE_ENV }
+
         <Drawer
           open={isMenuOpen}
           onRequestClose={closeMenu}
