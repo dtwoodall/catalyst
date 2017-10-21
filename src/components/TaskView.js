@@ -4,12 +4,22 @@ import {bindActionCreators, compose} from 'redux';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import queryString from 'query-string';
-import {getRootTasks, getTaskById, getNewTask, getChildTasksByParentId, getCategoryById, getIsCategorySelectDialogOpen} from '../modules';
+import {
+  getRootTasks,
+  getTaskById,
+  getNewTask,
+  getChildTasksByParentId,
+  getCategoryById,
+  getIsCategorySelectDialogOpen,
+  getIsStatusSelectDialogOpen
+} from '../modules';
 import {fetchTaskById, updateTask as updateExistingTask, sendTask, createTask} from '../modules/tasks';
 import {updateNewTask} from '../modules/newTask';
 import {openCategorySelectDialog, closeCategorySelectDialog} from '../modules/categorySelectDialog';
+import {openStatusSelectDialog, closeStatusSelectDialog} from '../modules/statusSelectDialog';
 import AppHeader from './AppHeader';
 import CategorySelectDialog from './CategorySelectDialog';
+import StatusSelectDialog from './StatusSelectDialog';
 import FlexBox from './FlexBox';
 import InlineEdit from './InlineEdit';
 import {withStyles, createStyleSheet} from 'material-ui/styles';
@@ -22,6 +32,7 @@ import Icon from 'material-ui/Icon';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import Slide from 'material-ui/transitions/Slide';
+import {statuses} from '../modules/tasks';
 
 const styleSheet = createStyleSheet(theme => ({
   header: {
@@ -94,6 +105,9 @@ class TaskView extends Component {
       isCategorySelectDialogOpen,
       openCategorySelectDialog,
       closeCategorySelectDialog,
+      isStatusSelectDialogOpen,
+      openStatusSelectDialog,
+      closeStatusSelectDialog,
       history
     } = this.props;
 
@@ -126,6 +140,14 @@ class TaskView extends Component {
               <Icon>folder</Icon>
             </ListItemIcon>
             <ListItemText primary={category ? category.name : 'Uncategorized'} />
+          </ListItem>
+          <ListItem button onClick={() => openStatusSelectDialog()}>
+            <ListItemIcon>
+              <Icon>
+                {statuses[task.status] ? statuses[task.status].icon : null}
+              </Icon>
+            </ListItemIcon>
+            <ListItemText primary={task.status} />
           </ListItem>
           <ListItem className={classes.multiline}>
             <ListItemIcon>
@@ -189,6 +211,30 @@ class TaskView extends Component {
             closeDialog={() => closeCategorySelectDialog()}
           />
         </Dialog>
+        <Dialog
+          fullScreen
+          open={isStatusSelectDialogOpen}
+          onRequestClose={closeStatusSelectDialog}
+          transition={<Slide direction="up" />}
+        >
+          <StatusSelectDialog
+            selectStatus={(status) => {
+              if (task.id) {
+                sendTask({
+                  ...task,
+                  status
+                });
+              } else {
+                this.updateTask({
+                  ...task,
+                  status
+                });
+              }
+              closeStatusSelectDialog();
+            }}
+            closeDialog={() => closeStatusSelectDialog()}
+          />
+        </Dialog>
       </div>
     );
 
@@ -210,6 +256,9 @@ const mapStateToProps = (state, { match, location }) => {
     category = getCategoryById(state, task.categoryId);
   } else {
     task = getNewTask(state);
+    if (!task.status) {
+      task.status = 'Not started';
+    }
     category = getCategoryById(state, task.categoryId);
     const query = queryString.parse(location.search);
     task.parentId = parseInt(query.parent);
@@ -219,7 +268,8 @@ const mapStateToProps = (state, { match, location }) => {
     task,
     childTasks,
     category,
-    isCategorySelectDialogOpen: getIsCategorySelectDialogOpen(state)
+    isCategorySelectDialogOpen: getIsCategorySelectDialogOpen(state),
+    isStatusSelectDialogOpen: getIsStatusSelectDialogOpen(state)
   };
 
 };
@@ -229,6 +279,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   addTask: (taskId) => push(`/tasks/new?parent=${taskId}`),
   openCategorySelectDialog,
   closeCategorySelectDialog,
+  openStatusSelectDialog,
+  closeStatusSelectDialog,
   fetchTaskById,
   sendTask,
   updateNewTask,

@@ -3,6 +3,29 @@ import {push} from 'react-router-redux';
 import {schema} from 'normalizr';
 import {categorySchema} from './categories';
 
+export const statuses = {
+  'Not started': {
+    name: 'Not started',
+    icon: 'inbox'
+  },
+  'In progress': {
+    name: 'In progress',
+    icon: 'timelapse'
+  },
+  'On hold': {
+    name: 'On hold',
+    icon: 'warning'
+  },
+  'Completed': {
+    name: 'Completed',
+    icon: 'check'
+  },
+  'Cancelled': {
+    name: 'Cancelled',
+    icon: 'cancel'
+  }
+};
+
 // Tasks reducer
 export default (state = {}, action) => {
   switch (action.type) {

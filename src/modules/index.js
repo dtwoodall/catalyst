@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import menu, * as fromMenu from './menu';
 import categorySelectDialog, * as fromCategorySelectDialog from './categorySelectDialog';
+import statusSelectDialog, * as fromStatusSelectDialog from './statusSelectDialog';
 import tasks, * as fromTasks from './tasks';
 import newTask, * as fromNewTask from './newTask';
 import categories, * as fromCategories from './categories';
@@ -12,6 +13,7 @@ export default combineReducers({
   router: routerReducer,
   menu,
   categorySelectDialog,
+  statusSelectDialog,
   tasks,
   newTask,
   categories,
@@ -22,6 +24,8 @@ export default combineReducers({
 export const getIsMenuOpen = state => fromMenu.getIsMenuOpen(state.menu);
 
 export const getIsCategorySelectDialogOpen = state => fromCategorySelectDialog.getIsCategorySelectDialogOpen(state.categorySelectDialog);
+
+export const getIsStatusSelectDialogOpen = state => fromStatusSelectDialog.getIsStatusSelectDialogOpen(state.statusSelectDialog);
 
 export const getRootTasks = state => fromTasks.getRootTasks(state.tasks);
 
