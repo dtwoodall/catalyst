@@ -64,7 +64,7 @@ CategoryLabel.propTypes = {
 CategoryLabel.defaultProps = {
   category: {
     name: 'Uncategorized',
-    color: '#000'
+    color: '#333'
   }
 }
 

@@ -113,7 +113,7 @@ class TaskView extends Component {
 
     return (
       <div>
-        <AppBar position="static" className={classes.header} style={{backgroundColor: category ? category.color : '#000'}}>
+        <AppBar position="static" className={classes.header} style={{backgroundColor: category ? category.color : '#333'}}>
           <FlexBox align="flex-end">
             <IconButton color="contrast" className={classes.headerButton} onClick={() => history.goBack()}>
               <Icon>keyboard_arrow_left</Icon>
